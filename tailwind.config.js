@@ -10,31 +10,44 @@ export default {
           light: 'var(--color-primary-light)',
           dark: 'var(--color-primary-dark)',
         },
+
+        // Surface colors - ADD THESE
         surface: {
           page: 'var(--color-surface-page)',
-          primary: 'var(--color-surface-action-primary)',
-          secondary: 'var(--color-surface-action-secondary)',
-          inverse: 'var(--color-surface-action-inverse)',
+          'action-primary': 'var(--color-surface-action-primary)',
+          'action-secondary': 'var(--color-surface-action-secondary)',
+          'action-inverse': 'var(--color-surface-action-inverse)',
         },
+
+        // Text colors - ADD THESE
         text: {
-          heading: 'var(--color-text-headings)',
+          heading: 'var(--color-text-heading)',
           body: 'var(--color-text-body)',
+          'on-primary': 'var(--color-text-on-primary)',
+          'on-secondary': 'var(--color-text-on-secondary)',
+          inverse: 'var(--color-text-inverse)',
           error: 'var(--color-text-error)',
           success: 'var(--color-text-success)',
           disabled: 'var(--color-text-disabled)',
-          onPrimary: 'var(--color-text-on-primary)',
-          onSecondary: 'var(--color-text-on-secondary)',
-          inverse: 'var(--color-text-inverse)',
         },
+
+        // Border colors - ADD THESE
         border: {
           DEFAULT: 'var(--color-border-primary)',
           error: 'var(--color-border-error)',
           disabled: 'var(--color-border-disabled)',
-        }
+        },
       },
+
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        heading: ['Inter', 'system-ui', 'sans-serif'],
+        heading: 'var(--font-heading)',
+        body: 'var(--font-body)',
+      },
+
+      borderRadius: {
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
       },
     },
   },

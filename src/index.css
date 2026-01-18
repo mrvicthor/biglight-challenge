@@ -1,3 +1,83 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    /* Auto-generated design tokens - DO NOT EDIT MANUALLY */
+
+:root {
+  /* Brand A - Primary Colors */
+  --color-primary-lightest: #fff0eb;
+  --color-primary-default: #fc4c02;
+  --color-primary-dark: #dd3300;
+  --color-primary-lighter: #ffe6df;
+  --color-primary-darkest: #aa2700;
+  --color-primary-aaa-text: #aa2700;
+  --color-primary-aaa-surface: #aa2700;
+  --color-primary-light: #ffd0c2;
+
+  /* Brand A - Surface Colors */
+  --color-surface-page: #faf9f5;
+  --color-surface-secondary: #ffffff;
+  --color-surface-disabled-dark: #f5f4f0;
+  --color-surface-disabled-light: #ffffff33;
+  --color-surface-action-primary: #1fceb5;
+  --color-surface-action-secondary: #000000;
+  --color-surface-action-inverse: #ffffff;
+
+  /* Brand A - Text Colors */
+  --color-text-heading: #000000;
+  --color-text-body: #000000;
+  --color-text-error: #9e1f28;
+  --color-text-success: #28a745;
+  --color-text-disabled: #949494;
+  --color-text-inverse: #ffffff;
+  --color-text-on-primary: #000000;
+  --color-text-on-secondary: #ffffff;
+  --color-text-on-tertiary: #000000;
+
+  /* Brand A - Border Colors */
+  --color-border-primary: #000000;
+  --color-border-error: #9e1f28;
+  --color-border-disabled: #00000033;
+
+  /* Fonts & Spacing */
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+[data-theme="brandB"] {
+  /* Brand B - Primary Colors */
+  --color-primary-lightest: #f9f3f5;
+  --color-primary-default: #901438;
+  --color-primary-dark: #73102d;
+  --color-primary-lighter: #e9d0d7;
+  --color-primary-darkest: #480a1c;
+  --color-primary-aaa-text: #480a1c;
+  --color-primary-aaa-surface: #480a1c;
+  --color-primary-light: #d3a1af;
+
+  /* Brand B - Surface Colors */
+  --color-surface-page: #f5f5f5;
+  --color-surface-action-primary: #fc4c02;
+  --color-surface-action-secondary: #570d1c;
+  --color-surface-action-inverse: #ebeae8;
+
+  /* Brand B - Text Colors */
+  --color-text-on-primary: #ffffff;
+  --color-text-on-secondary: #ffffff;
+
+  /* Fonts & Spacing */
+  --font-heading: 'mencken-std-head-narrow', serif;
+  --font-body: 'Open Sans', sans-serif;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+}
+@components{
+
+}
+ }
