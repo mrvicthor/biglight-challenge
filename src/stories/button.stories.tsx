@@ -45,6 +45,8 @@ export const Primary: Story = {
     args: {
         variant: 'primary',
         children: 'Button label',
+        size: 'medium',
+        disabled: true
     },
 };
 
@@ -53,6 +55,7 @@ export const Secondary: Story = {
     args: {
         variant: 'secondary',
         children: 'Button label',
+        size: 'medium'
     },
 };
 
@@ -61,6 +64,7 @@ export const Tertiary: Story = {
     args: {
         variant: 'tertiary',
         children: 'Tertiary Button',
+        size: 'medium'
     },
 };
 
@@ -70,6 +74,7 @@ export const PrimaryDisabled: Story = {
         variant: 'primary',
         children: 'Primary Disabled',
         disabled: true,
+        size: 'medium'
     },
 };
 
@@ -78,6 +83,7 @@ export const SecondaryDisabled: Story = {
         variant: 'secondary',
         children: 'Secondary Disabled',
         disabled: true,
+        size: 'medium'
     },
 };
 
@@ -86,6 +92,7 @@ export const TertiaryDisabled: Story = {
         variant: 'tertiary',
         children: 'Tertiary Disabled',
         disabled: true,
+        size: 'medium'
     },
 };
 
@@ -96,27 +103,36 @@ export const AllVariants: Story = {
             <div>
                 <h3 className="text-lg font-semibold mb-4 text-text-heading">Default States</h3>
                 <div className="flex gap-4 flex-wrap">
-                    <Button variant="primary">Primary</Button>
-                    <Button variant="secondary">Secondary</Button>
-                    <Button variant="tertiary">Tertiary</Button>
+                    <Button size='medium' variant="primary">Primary</Button>
+                    <Button size='medium' variant="secondary">Secondary</Button>
+                    <Button size='medium' variant="tertiary">Tertiary</Button>
+                    <Button size='small' variant="primary">Primary</Button>
+                    <Button size='small' variant="secondary">Secondary</Button>
+                    <Button size='small' variant="tertiary">Tertiary</Button>
                 </div>
             </div>
 
             <div>
                 <h3 className="text-lg font-semibold mb-4 text-text-heading">Disabled States</h3>
                 <div className="flex gap-4 flex-wrap">
-                    <Button variant="primary" disabled>Primary</Button>
-                    <Button variant="secondary" disabled>Secondary</Button>
-                    <Button variant="tertiary" disabled>Tertiary</Button>
+                    <Button size='medium' variant="primary" disabled>Primary</Button>
+                    <Button size='medium' variant="secondary" disabled>Secondary</Button>
+                    <Button size='medium' variant="tertiary" disabled>Tertiary</Button>
+                    <Button size='small' variant="primary" disabled>Primary</Button>
+                    <Button size='small' variant="secondary" disabled>Secondary</Button>
+                    <Button size='small' variant="tertiary" disabled>Tertiary</Button>
                 </div>
             </div>
 
             <div>
                 <h3 className="text-lg font-semibold mb-4 text-text-heading">Different Sizes</h3>
                 <div className="flex gap-4 flex-wrap items-center">
-                    <Button variant="primary">Regular Button</Button>
-                    <Button variant="primary">Long Text Button Example</Button>
-                    <Button variant="primary">Short</Button>
+                    <Button size='medium' variant="primary">Regular Button</Button>
+                    <Button size='medium' variant="primary">Long Text Button Example</Button>
+                    <Button size='medium' variant="primary">Short</Button>
+                    <Button size='small' variant="primary">Regular Button</Button>
+                    <Button size='small' variant="primary">Long Text Button Example</Button>
+                    <Button size='small' variant="primary">Short</Button>
                 </div>
             </div>
         </div>
@@ -134,13 +150,13 @@ export const Interactive: Story = {
             <div className="space-y-4 p-8">
                 <h3 className="text-lg font-semibold mb-4 text-text-heading">Click to Test</h3>
                 <div className="flex gap-4">
-                    <Button variant="primary" onClick={handleClick}>
+                    <Button size='medium' variant="primary" onClick={handleClick}>
                         Click Me
                     </Button>
-                    <Button variant="secondary" onClick={handleClick}>
+                    <Button size='medium' variant="secondary" onClick={handleClick}>
                         Or Click Me
                     </Button>
-                    <Button variant="tertiary" onClick={handleClick}>
+                    <Button size='medium' variant="tertiary" onClick={handleClick}>
                         Maybe Me?
                     </Button>
                 </div>
@@ -156,18 +172,18 @@ export const ThemeComparison: Story = {
             <div>
                 <h3 className="text-lg font-semibold mb-4">Brand A (Default)</h3>
                 <div className="flex gap-4">
-                    <Button variant="primary">Primary</Button>
-                    <Button variant="secondary">Secondary</Button>
-                    <Button variant="tertiary">Tertiary</Button>
+                    <Button size='medium' variant="primary">Primary</Button>
+                    <Button size='medium' variant="secondary">Secondary</Button>
+                    <Button size='medium' variant="tertiary">Tertiary</Button>
                 </div>
             </div>
 
             <div data-theme="brandB">
                 <h3 className="text-lg font-semibold mb-4">Brand B</h3>
                 <div className="flex gap-4">
-                    <Button variant="primary">Primary</Button>
-                    <Button variant="secondary">Secondary</Button>
-                    <Button variant="tertiary">Tertiary</Button>
+                    <Button size='medium' variant="primary">Primary</Button>
+                    <Button size='medium' variant="secondary">Secondary</Button>
+                    <Button size='medium' variant="tertiary">Tertiary</Button>
                 </div>
             </div>
         </div>
@@ -186,11 +202,11 @@ export const AccessibilityTest: Story = {
                     Try tabbing through these buttons with your keyboard:
                 </p>
                 <div className="flex gap-4 flex-wrap">
-                    <Button variant="primary">First</Button>
-                    <Button variant="secondary">Second</Button>
-                    <Button variant="tertiary">Third</Button>
-                    <Button variant="primary" disabled>Disabled (Skipped)</Button>
-                    <Button variant="primary">Fourth</Button>
+                    <Button size='medium' variant="primary">First</Button>
+                    <Button size='medium' variant="secondary">Second</Button>
+                    <Button size='medium' variant="tertiary">Third</Button>
+                    <Button size='medium' variant="primary" disabled>Disabled (Skipped)</Button>
+                    <Button size='medium' variant="primary">Fourth</Button>
                 </div>
             </div>
         </div>

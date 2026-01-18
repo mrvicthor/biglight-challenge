@@ -1,7 +1,7 @@
 export function ChevronRight() {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M6 12L10 8L6 4" stroke="black" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M6 12L10 8L6 4" />
         </svg>
     )
 }

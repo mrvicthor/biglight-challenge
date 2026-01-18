@@ -6,19 +6,32 @@ console.log('🔄 Generating design tokens...\n');
 const tokensPath = path.join(__dirname, '../figma-tokens.json');
 
 if (!fs.existsSync(tokensPath)) {
-    console.error('❌ Error: tokens/figma-tokens.json not found!');
+    console.error('❌ Error: figma-tokens.json not found!');
     process.exit(1);
 }
 
 const tokens = JSON.parse(fs.readFileSync(tokensPath, 'utf8'));
 
-// Helper to find a token value anywhere in the token tree
+/**
+ * Utils
+ */
+const toKebab = (str) =>
+    String(str)
+        .trim()
+        .toLowerCase()
+        .replace(/[()]/g, '')
+        .replace(/[\s_/]+/g, '-')
+        .replace(/-+/g, '-');
+
+const isObject = (v) => v && typeof v === 'object' && !Array.isArray(v);
+
+/**
+ * Helper to find a token value anywhere in the token tree
+ */
 function findToken(tokenPath, allTokens) {
-    // Remove curly braces if present
     const cleanPath = tokenPath.replace(/[{}]/g, '');
     const parts = cleanPath.split('.');
 
-    // Try to find the token by searching through all token sets
     for (const tokenSet of Object.keys(allTokens)) {
         let current = allTokens[tokenSet];
         let found = true;
@@ -42,37 +55,26 @@ function findToken(tokenPath, allTokens) {
     return null;
 }
 
-// Recursive resolver with depth limit
+/**
+ * Recursive resolver for alias tokens: "{A.B.C}" -> actual value
+ */
 function resolve(value, allTokens, depth = 0, visited = new Set()) {
-    if (depth > 20) {
-        console.warn(`⚠️  Max recursion depth reached for: ${value}`);
-        return value;
-    }
-
+    if (depth > 25) return value;
     if (typeof value !== 'string') return value;
 
-    // Check if it's a token reference
     const match = value.match(/^\{(.+)\}$/);
     if (!match) return value;
 
-    // Prevent infinite loops
-    if (visited.has(value)) {
-        console.warn(`⚠️  Circular reference detected: ${value}`);
-        return value;
-    }
+    if (visited.has(value)) return value;
     visited.add(value);
 
-    const tokenPath = match[1];
-
-    // Try to find the token
-    const foundValue = findToken(tokenPath, allTokens);
+    const foundValue = findToken(match[1], allTokens);
 
     if (foundValue === null) {
-        console.warn(`⚠️  Token not found: ${tokenPath}`);
+        console.warn(`⚠️  Token not found: ${match[1]}`);
         return value;
     }
 
-    // If the found value is also a reference, resolve it recursively
     if (typeof foundValue === 'string' && foundValue.match(/^\{.+\}$/)) {
         return resolve(foundValue, allTokens, depth + 1, visited);
     }
@@ -80,188 +82,378 @@ function resolve(value, allTokens, depth = 0, visited = new Set()) {
     return foundValue;
 }
 
-// Generate the CSS
-function generateCSS() {
-    const brandA = tokens['Mapped/BrandA'];
-    const brandB = tokens['Mapped/BrandB'];
-    const aliasA = tokens['Alias colours/BrandA'];
-    const aliasB = tokens['Alias colours/BrandB'];
+/**
+ * Extract all colors for a brand (your existing logic with small cleanup)
+ */
+function extractAllColors(brand) {
+    const mapped = tokens[`Mapped/${brand}`];
+    const alias = tokens[`Alias colours/${brand}`];
+    const colors = {};
 
-    let css = '/* Auto-generated design tokens - DO NOT EDIT MANUALLY */\n\n';
-
-    // Brand A
-    css += ':root {\n';
-    css += '  /* Brand A - Primary Colors */\n';
-
-    if (aliasA?.Primary) {
-        Object.entries(aliasA.Primary).forEach(([key, val]) => {
+    // Primary colors
+    if (alias?.Primary) {
+        Object.entries(alias.Primary).forEach(([key, val]) => {
             if (val?.value) {
                 const resolved = resolve(val.value, tokens);
-                const cssKey = key.toLowerCase().replace(/\s+/g, '-');
-                css += `  --color-primary-${cssKey}: ${resolved};\n`;
+                const cssKey = toKebab(key);
+                colors[`primary-${cssKey}`] = resolved;
             }
         });
     }
 
-    css += '\n  /* Brand A - Surface Colors */\n';
-    if (brandA?.Surface?.Colour) {
-        const entries = [
-            ['Page', 'surface-page'],
-            ['Secondary', 'surface-secondary'],
-            ['Disabled-Dark', 'surface-disabled-dark'],
-            ['Disabled-Light', 'surface-disabled-light'],
-        ];
+    // Surface colors (keep your curated list + action)
+    if (mapped?.Surface?.Colour) {
+        const surface = mapped.Surface.Colour;
 
-        entries.forEach(([key, cssVar]) => {
-            const val = brandA.Surface.Colour[key];
-            if (val?.value) {
-                css += `  --color-${cssVar}: ${resolve(val.value, tokens)};\n`;
+        ['Page', 'Secondary', 'Disabled-Dark', 'Disabled-Light', 'Hover'].forEach((key) => {
+            if (surface[key]?.value) {
+                colors[`surface-${toKebab(key)}`] = resolve(surface[key].value, tokens);
             }
         });
 
-        // Action colors
-        if (brandA.Surface.Colour.Action) {
-            const action = brandA.Surface.Colour.Action;
-            ['Primary', 'Secondary', 'Inverse'].forEach(key => {
-                if (action[key]?.value) {
-                    const cssKey = key.toLowerCase();
-                    css += `  --color-surface-action-${cssKey}: ${resolve(action[key].value, tokens)};\n`;
+        if (surface.Action) {
+            Object.entries(surface.Action).forEach(([key, val]) => {
+                if (val?.value) {
+                    colors[`surface-action-${toKebab(key)}`] = resolve(val.value, tokens);
                 }
             });
         }
     }
 
-    css += '\n  /* Brand A - Text Colors */\n';
-    if (brandA?.Text?.Colour) {
-        const text = brandA.Text.Colour;
-        const entries = [
-            ['Headings', 'text-heading'],
-            ['Body', 'text-body'],
-            ['Error', 'text-error'],
-            ['Success', 'text-success'],
-            ['Disabled', 'text-disabled'],
-            ['Inverse', 'text-inverse'],
-        ];
+    // Text colors
+    if (mapped?.Text?.Colour) {
+        const text = mapped.Text.Colour;
 
-        entries.forEach(([key, cssVar]) => {
+        ['Headings', 'Body', 'Error', 'Success', 'Disabled', 'Inverse'].forEach((key) => {
             if (text[key]?.value) {
-                css += `  --color-${cssVar}: ${resolve(text[key].value, tokens)};\n`;
+                colors[`text-${toKebab(key)}`] = resolve(text[key].value, tokens);
             }
         });
 
-        // Action text colors
         if (text.Action) {
-            ['OnPrimary', 'OnSecondary', 'OnTertiary'].forEach(key => {
-                if (text.Action[key]?.value) {
-                    const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase().slice(1);
-                    css += `  --color-text-${cssKey}: ${resolve(text.Action[key].value, tokens)};\n`;
+            Object.entries(text.Action).forEach(([key, val]) => {
+                if (val?.value) {
+                    colors[`text-${toKebab(key)}`] = resolve(val.value, tokens);
                 }
             });
         }
     }
 
-    css += '\n  /* Brand A - Border Colors */\n';
-    if (brandA?.Border?.Colour) {
-        const border = brandA.Border.Colour;
-        ['Primary', 'Error', 'Disabled', 'Success'].forEach(key => {
+    // Border colors
+    if (mapped?.Border?.Colour) {
+        const border = mapped.Border.Colour;
+
+        ['Primary', 'Error', 'Disabled', 'Success', 'Warning', 'Secondary'].forEach((key) => {
             if (border[key]?.value) {
-                css += `  --color-border-${key.toLowerCase()}: ${resolve(border[key].value, tokens)};\n`;
+                colors[`border-${toKebab(key)}`] = resolve(border[key].value, tokens);
             }
         });
     }
 
-    css += '\n  /* Fonts & Spacing */\n';
-    css += `  --font-heading: 'Inter', sans-serif;\n`;
-    css += `  --font-body: 'Inter', sans-serif;\n`;
-    css += `  --radius-sm: 4px;\n`;
-    css += `  --radius-md: 8px;\n`;
-    css += `  --radius-lg: 12px;\n`;
-    css += '}\n\n';
+    return colors;
+}
 
-    // Brand B
-    css += '[data-theme="brandB"] {\n';
-    css += '  /* Brand B - Primary Colors */\n';
+/**
+ * Border widths for a brand
+ */
+function extractBorderWidths(brand) {
+    const mapped = tokens[`Mapped/${brand}`];
+    const widths = {};
 
-    if (aliasB?.Primary) {
-        Object.entries(aliasB.Primary).forEach(([key, val]) => {
-            if (val?.value) {
+    if (mapped?.Border?.Width) {
+        Object.entries(mapped.Border.Width).forEach(([key, val]) => {
+            if (val?.value !== undefined) {
                 const resolved = resolve(val.value, tokens);
-                const cssKey = key.toLowerCase().replace(/\s+/g, '-');
-                css += `  --color-primary-${cssKey}: ${resolved};\n`;
+                widths[toKebab(key)] = `${resolved}px`;
             }
         });
     }
 
-    css += '\n  /* Brand B - Surface Colors */\n';
-    if (brandB?.Surface?.Colour?.Page?.value) {
-        css += `  --color-surface-page: ${resolve(brandB.Surface.Colour.Page.value, tokens)};\n`;
-    }
-    if (brandB?.Surface?.Colour?.Action) {
-        const action = brandB.Surface.Colour.Action;
-        ['Primary', 'Secondary', 'Inverse'].forEach(key => {
-            if (action[key]?.value) {
-                css += `  --color-surface-action-${key.toLowerCase()}: ${resolve(action[key].value, tokens)};\n`;
+    return widths;
+}
+
+/**
+ * Border radius for a brand
+ */
+function extractBorderRadius(brand) {
+    const mapped = tokens[`Mapped/${brand}`];
+    const radius = {};
+
+    if (mapped?.Border?.Radius) {
+        Object.entries(mapped.Border.Radius).forEach(([key, val]) => {
+            if (val?.value !== undefined) {
+                const resolved = resolve(val.value, tokens);
+                radius[toKebab(key)] = `${resolved}px`;
             }
         });
     }
 
-    css += '\n  /* Brand B - Text Colors */\n';
-    if (brandB?.Text?.Colour?.Action) {
-        const action = brandB.Text.Colour.Action;
-        ['OnPrimary', 'OnSecondary'].forEach(key => {
-            if (action[key]?.value) {
-                const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase().slice(1);
-                css += `  --color-text-${cssKey}: ${resolve(action[key].value, tokens)};\n`;
+    return radius;
+}
+
+/**
+ * Typography: Font families (Mapped/{brand}/Font/Font family)
+ * Produces:
+ *   --font-heading
+ *   --font-body
+ *   --font-sub-heading (if exists)
+ */
+function extractFontFamilies(brand) {
+    const mapped = tokens[`Mapped/${brand}`];
+    const families = {};
+
+    const fontFamilyGroup = mapped?.Font?.['Font family'];
+    if (!fontFamilyGroup) return families;
+
+    // Example keys in your file: "Headings", "Paragraph", "Sub Headings"
+    Object.entries(fontFamilyGroup).forEach(([key, val]) => {
+        if (val?.value) {
+            const resolved = resolve(val.value, tokens);
+            const k = toKebab(key);
+
+            // normalize to nicer variable names
+            if (k === 'headings' || k === 'heading') families['heading'] = resolved;
+            else if (k === 'paragraph' || k === 'body') families['body'] = resolved;
+            else if (k === 'sub-headings' || k === 'sub-heading') families['sub-heading'] = resolved;
+            else families[k] = resolved;
+        }
+    });
+
+    return families;
+}
+
+/**
+ * Typography: Font weights (Mapped/{brand}/Font/Font weight)
+ * Your values are strings like "Regular", "Semi Bold", etc.
+ * We convert them to numeric CSS weights.
+ */
+const FONT_WEIGHT_MAP = {
+    light: 300,
+    regular: 400,
+    medium: 500,
+    'semi-bold': 600,
+    semibold: 600,
+    bold: 700,
+    'extra-bold': 800,
+    extrabold: 800,
+};
+
+function normalizeWeightName(value) {
+    return toKebab(value).replace(/-/g, '-');
+}
+
+function extractFontWeights(brand) {
+    const mapped = tokens[`Mapped/${brand}`];
+    const weights = {};
+
+    const weightGroup = mapped?.Font?.['Font weight'];
+    if (!weightGroup) return weights;
+
+    // structure in your file: { Header: { Light: {...}, Regular: {...}, ... }, Paragraph: {...} }
+    Object.values(weightGroup).forEach((section) => {
+        if (!isObject(section)) return;
+
+        Object.values(section).forEach((token) => {
+            if (token?.value) {
+                const name = normalizeWeightName(token.value);
+                const numeric = FONT_WEIGHT_MAP[name];
+                if (numeric) weights[name] = numeric;
             }
         });
-    }
+    });
 
-    css += '\n  /* Fonts & Spacing */\n';
-    css += `  --font-heading: 'mencken-std-head-narrow', serif;\n`;
-    css += `  --font-body: 'Open Sans', sans-serif;\n`;
-    css += `  --radius-sm: 0px;\n`;
-    css += `  --radius-md: 0px;\n`;
-    css += `  --radius-lg: 0px;\n`;
+    // Ensure common keys exist if possible
+    return weights;
+}
+
+/**
+ * Typography: Responsive font sizes + line heights
+ * From:
+ *   Responsive/Desktop/Font-size/*
+ *   Responsive/Mobile/Font-size/*
+ *   Responsive/Desktop/Line-height/*
+ *   Responsive/Mobile/Line-height/*
+ */
+function extractResponsiveGroup(device, groupName) {
+    const responsive = tokens[`Responsive/${device}`];
+    const group = responsive?.[groupName];
+    const out = {};
+
+    if (!group) return out;
+
+    Object.entries(group).forEach(([category, values]) => {
+        if (!isObject(values)) return;
+
+        Object.entries(values).forEach(([key, token]) => {
+            if (token?.value === undefined) return;
+
+            const name = `${toKebab(category)}-${toKebab(key)}`; // e.g. body-md, heading-h1
+            out[name] = token.value;
+        });
+    });
+
+    return out;
+}
+
+function toPx(v) {
+    if (typeof v === 'number') return `${v}px`;
+    return v;
+}
+
+/**
+ * Generate CSS variables for a brand block (:root or [data-theme="brandB"])
+ */
+function writeBrandBlock({
+    selector,
+    colors,
+    widths,
+    radius,
+    fontFamilies,
+    fontWeights,
+}) {
+    let css = `${selector} {\n`;
+
+    // Colors
+    css += '  /* Colors */\n';
+    Object.entries(colors).forEach(([key, value]) => {
+        css += `  --color-${key}: ${value};\n`;
+    });
+
+    // Border widths
+    css += '\n  /* Border widths */\n';
+    Object.entries(widths).forEach(([key, value]) => {
+        css += `  --border-width-${key}: ${value};\n`;
+    });
+
+    // Radius
+    css += '\n  /* Radius */\n';
+    Object.entries(radius).forEach(([key, value]) => {
+        css += `  --radius-${key}: ${value};\n`;
+    });
+
+    // Font families (brand-specific)
+    css += '\n  /* Font families */\n';
+    if (fontFamilies.heading) css += `  --font-heading: '${fontFamilies.heading}', sans-serif;\n`;
+    if (fontFamilies.body) css += `  --font-body: '${fontFamilies.body}', sans-serif;\n`;
+    if (fontFamilies['sub-heading']) css += `  --font-sub-heading: '${fontFamilies['sub-heading']}', sans-serif;\n`;
+
+    // Font weights (numeric)
+    css += '\n  /* Font weights */\n';
+    Object.entries(fontWeights).forEach(([key, value]) => {
+        css += `  --font-weight-${key}: ${value};\n`;
+    });
+
+    css += '}\n';
+    return css;
+}
+
+/**
+ * Generate CSS variables for responsive typography
+ * Desktop default in :root, mobile override inside @media
+ */
+function writeResponsiveTypography() {
+    const desktopSizes = extractResponsiveGroup('Desktop', 'Font-size');
+    const mobileSizes = extractResponsiveGroup('Mobile', 'Font-size');
+    const desktopHeights = extractResponsiveGroup('Desktop', 'Line-height');
+    const mobileHeights = extractResponsiveGroup('Mobile', 'Line-height');
+
+    let css = '\n/* Responsive typography */\n';
+
+    // Desktop defaults
+    css += ':root {\n';
+    css += '  /* Font sizes (desktop) */\n';
+    Object.entries(desktopSizes).forEach(([key, value]) => {
+        css += `  --font-size-${key}: ${toPx(value)};\n`;
+    });
+
+    css += '\n  /* Line heights (desktop) */\n';
+    Object.entries(desktopHeights).forEach(([key, value]) => {
+        css += `  --line-height-${key}: ${toPx(value)};\n`;
+    });
+
+    css += '}\n';
+
+    // Mobile overrides
+    css += '\n@media (max-width: 767px) {\n';
+    css += '  :root {\n';
+    css += '    /* Font sizes (mobile) */\n';
+    Object.entries(mobileSizes).forEach(([key, value]) => {
+        css += `    --font-size-${key}: ${toPx(value)};\n`;
+    });
+
+    css += '\n    /* Line heights (mobile) */\n';
+    Object.entries(mobileHeights).forEach(([key, value]) => {
+        css += `    --line-height-${key}: ${toPx(value)};\n`;
+    });
+
+    css += '  }\n';
     css += '}\n';
 
     return css;
 }
 
+/**
+ * Main CSS generator
+ */
+function generateCSS() {
+    const brandAColors = extractAllColors('BrandA');
+    const brandBColors = extractAllColors('BrandB');
 
+    const brandAWidths = extractBorderWidths('BrandA');
+    const brandBWidths = extractBorderWidths('BrandB');
+
+    const brandARadius = extractBorderRadius('BrandA');
+    const brandBRadius = extractBorderRadius('BrandB');
+
+    const brandAFamilies = extractFontFamilies('BrandA');
+    const brandBFamilies = extractFontFamilies('BrandB');
+
+    const brandAWeights = extractFontWeights('BrandA');
+    const brandBWeights = extractFontWeights('BrandB');
+
+    let css = '/* Auto-generated design tokens - DO NOT EDIT MANUALLY */\n\n';
+
+    // Brand A defaults
+    css += writeBrandBlock({
+        selector: ':root',
+        colors: brandAColors,
+        widths: brandAWidths,
+        radius: brandARadius,
+        fontFamilies: brandAFamilies,
+        fontWeights: brandAWeights,
+    });
+
+    // Brand B theme override
+    css += '\n' + writeBrandBlock({
+        selector: '[data-theme="brandB"]',
+        colors: brandBColors,
+        widths: brandBWidths,
+        radius: brandBRadius,
+        fontFamilies: brandBFamilies,
+        fontWeights: brandBWeights,
+    });
+
+    // Responsive typography (device-based)
+    css += writeResponsiveTypography();
+
+    return css;
+}
 
 try {
-    // const stylesDir = path.join(__dirname, '../src/styles');
-    // if (!fs.existsSync(stylesDir)) {
-    //     fs.mkdirSync(stylesDir, { recursive: true });
-    // }
-
-    // fs.writeFileSync(path.join(stylesDir, 'tokens.css'), generateCSS());
-    // console.log('✅ Generated src/styles/tokens.css');
-
-
-    // console.log('\n🎉 Done! Check src/styles/tokens.css for resolved values\n');
     const indexCssPath = path.join(__dirname, '../src/index.css');
-    let indexCss = '';
 
-    if (fs.existsSync(indexCssPath)) {
-        indexCss = fs.readFileSync(indexCssPath, 'utf8');
-        // Remove old tokens if they exist
-        indexCss = indexCss.replace(/@layer base \{[\s\S]*?\n\}/m, '');
-    }
-
-    // Add tokens within @layer base
     const cssWithLayer = `@tailwind base;
-    @tailwind components;
-    @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
 
-    @layer base {
-    ${generateCSS()}
-     }
-     `;
+@layer base {
+${generateCSS()}
+}
+`;
 
     fs.writeFileSync(indexCssPath, cssWithLayer);
     console.log('✅ Updated src/index.css with tokens');
-
+    console.log('🎉 Done! Colors, borders, radius, font families, font weights, font sizes, and line-heights included.\n');
 } catch (error) {
     console.error('❌ Error:', error);
     process.exit(1);
