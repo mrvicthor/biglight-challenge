@@ -1,6 +1,6 @@
 import type { JSX } from 'preact'
-import arrowLeft from '../assets/chevron-left.svg'
-import arrowRight from '../assets/chevron-right.svg'
+import { ChevronLeft } from './chevronLeft';
+import { ChevronRight } from './chevronRight';
 export interface ButtonProps {
     variant?: 'primary' | 'secondary' | 'tertiary';
     disabled?: boolean;
@@ -25,11 +25,11 @@ export function Button({
         secondary:
             'bg-[var(--color-surface-action-secondary)] hover:bg-[var(--color-surface-action-primary)] text-[var(--color-text-on-secondary)] hover:opacity-90 active:opacity-80 hover:text-[var(--color-text-on-primary)]',
         tertiary:
-            'bg-transparent text-[var(--color-text-body)] border border-[var(--color-border-primary)] hover:bg-gray-50 active:bg-gray-100',
+            'bg-transparent text-[var(--color-text-body)] border border-[var(--color-border-primary)] hover:bg-[var(--color-surface-action-secondary)] active:bg-gray-100 hover:text-[var(--color-text-on-secondary)]',
     }
 
     const tertiaryDisabled =
-        'text-[var(--color-text-disabled)] border-[var(--color-border-disabled)]'
+        'text-[var(--color-text-disabled)] hover:text-[var(--color-text-on-secondary)] border-[var(--color-border-disabled)]'
 
     const className = [
         baseStyles,
@@ -40,6 +40,6 @@ export function Button({
         .filter(Boolean)
         .join(' ')
 
-    return (<button className={className} disabled={disabled} onClick={onClick} aria-disabled={disabled} {...props}><img src={arrowLeft} alt='left arrow' />{children}<img src={arrowRight} alt='right arrow' /></button>)
+    return (<button className={className} disabled={disabled} onClick={onClick} aria-disabled={disabled} {...props}><ChevronLeft />{children}<ChevronRight /></button>)
 }
 
