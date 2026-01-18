@@ -1,4 +1,4 @@
-import { h } from "preact";
+
 import type { Meta, StoryObj } from '@storybook/preact'
 import ContactCard from './card'
 

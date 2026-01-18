@@ -17,9 +17,9 @@ export function Button({
     ...props
 }: ButtonProps) {
     const baseStyles =
-        'px-4 flex items-center md: gap-2 justify-between rounded-round font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
+        'px-4 flex items-center gap-2 justify-between rounded-round font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
     const disabledCommon =
-        ' disabled:cursor-not-allowed disabled:pointer-events-none disabled:bg-surface-disabled-dark disabled:text-text-disabled';
+        'disabled:cursor-not-allowed disabled:pointer-events-none disabled:bg-surface-disabled-dark disabled:text-text-disabled';
 
     const sizes: Record<NonNullable<ButtonProps['size']>, string> = {
         medium: 'w-[10.75rem] h-[3rem] text-body-md py-4',
@@ -28,11 +28,11 @@ export function Button({
 
     const variants: Record<NonNullable<ButtonProps['variant']>, string> = {
         primary:
-            'bg-surface-action-primary text-text-on-primary hover:opacity-90 active:opacity-80 hover:bg-surface-action-secondary hover:text-text-inverse',
+            'bg-surface-action-primary text-text-action-on-primary hover:opacity-90 active:opacity-80 hover:bg-surface-action-secondary hover:text-text-inverse',
         secondary:
-            'bg-surface-action-secondary hover:bg-surface-action-primary text-text-on-secondary hover:opacity-90 active:opacity-80 hover:text-text-on-primary',
+            'bg-surface-action-secondary hover:bg-surface-action-primary text-text-action-on-secondary hover:opacity-90 active:opacity-80 hover:text-text-action-on-primary',
         tertiary:
-            'bg-transparent text-text-body border-md border-border-primary hover:bg-surface-action-secondary active:bg-gray-100 hover:text-text-on-secondary',
+            'bg-transparent text-text-action-on-tertiary border-md border-border-primary hover:bg-surface-action-secondary active:bg-gray-100 hover:text-text-action-inverse',
     }
 
     const tertiaryDisabled =

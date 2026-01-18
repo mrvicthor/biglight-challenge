@@ -15,13 +15,13 @@ const tokens = JSON.parse(fs.readFileSync(tokensPath, 'utf8'));
 /**
  * Utils
  */
-const toKebab = (str) =>
-    String(str)
+function toKebab(str) {
+    return String(str)
         .trim()
-        .toLowerCase()
-        .replace(/[()]/g, '')
-        .replace(/[\s_/]+/g, '-')
-        .replace(/-+/g, '-');
+        .replace(/([a-z0-9])([A-Z])/g, '$1-$2') // camelCase -> kebab
+        .replace(/[\s_/]+/g, '-')               // spaces/slashes -> dash
+        .toLowerCase();
+}
 
 const isObject = (v) => v && typeof v === 'object' && !Array.isArray(v);
 
@@ -82,6 +82,26 @@ function resolve(value, allTokens, depth = 0, visited = new Set()) {
     return foundValue;
 }
 
+function flattenTokenGroup(group, prefix, out) {
+    if (!group || typeof group !== 'object') return;
+
+    for (const [key, val] of Object.entries(group)) {
+        const nextKey = `${prefix}-${toKebab(key)}`;
+
+        // Token leaf: { value: ... }
+        if (val && typeof val === 'object' && 'value' in val) {
+            out[nextKey] = resolve(val.value, tokens);
+            continue;
+        }
+
+        // Nested group
+        if (val && typeof val === 'object') {
+            flattenTokenGroup(val, nextKey, out);
+        }
+    }
+}
+
+
 /**
  * Extract all colors for a brand (your existing logic with small cleanup)
  */
@@ -94,60 +114,26 @@ function extractAllColors(brand) {
     if (alias?.Primary) {
         Object.entries(alias.Primary).forEach(([key, val]) => {
             if (val?.value) {
-                const resolved = resolve(val.value, tokens);
-                const cssKey = toKebab(key);
-                colors[`primary-${cssKey}`] = resolved;
+                const cssKey = key.toLowerCase().replace(/\s+/g, '-');
+                colors[`primary-${cssKey}`] = resolve(val.value, tokens);
             }
         });
     }
 
     // Surface colors (keep your curated list + action)
     if (mapped?.Surface?.Colour) {
-        const surface = mapped.Surface.Colour;
-
-        ['Page', 'Secondary', 'Disabled-Dark', 'Disabled-Light', 'Hover'].forEach((key) => {
-            if (surface[key]?.value) {
-                colors[`surface-${toKebab(key)}`] = resolve(surface[key].value, tokens);
-            }
-        });
-
-        if (surface.Action) {
-            Object.entries(surface.Action).forEach(([key, val]) => {
-                if (val?.value) {
-                    colors[`surface-action-${toKebab(key)}`] = resolve(val.value, tokens);
-                }
-            });
-        }
+        flattenTokenGroup(mapped.Surface.Colour, 'surface', colors);
     }
 
     // Text colors
     if (mapped?.Text?.Colour) {
-        const text = mapped.Text.Colour;
-
-        ['Headings', 'Body', 'Error', 'Success', 'Disabled', 'Inverse'].forEach((key) => {
-            if (text[key]?.value) {
-                colors[`text-${toKebab(key)}`] = resolve(text[key].value, tokens);
-            }
-        });
-
-        if (text.Action) {
-            Object.entries(text.Action).forEach(([key, val]) => {
-                if (val?.value) {
-                    colors[`text-${toKebab(key)}`] = resolve(val.value, tokens);
-                }
-            });
-        }
+        flattenTokenGroup(mapped.Text.Colour, 'text', colors);
     }
+
 
     // Border colors
     if (mapped?.Border?.Colour) {
-        const border = mapped.Border.Colour;
-
-        ['Primary', 'Error', 'Disabled', 'Success', 'Warning', 'Secondary'].forEach((key) => {
-            if (border[key]?.value) {
-                colors[`border-${toKebab(key)}`] = resolve(border[key].value, tokens);
-            }
-        });
+        flattenTokenGroup(mapped.Border.Colour, 'border', colors);
     }
 
     return colors;

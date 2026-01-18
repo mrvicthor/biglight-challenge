@@ -9,9 +9,13 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "tokens": "node scripts/generate.token.cjs"
+    "tokens:css": "node scripts/generate.token.cjs",
+    "tokens:tw": "node scripts/generate.tailwind.from.css.cjs",
+    "tokens": "npm run tokens:css && npm run tokens:tw"
+
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "preact": "^10.27.2"
   },
   "devDependencies": {
