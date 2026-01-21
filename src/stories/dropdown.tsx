@@ -93,7 +93,7 @@ export const Dropdown = ({
             "-top-2.5 text-sm font-medium left-[0.5rem]": shouldFloatLabel && visualState !== 'Disabled',
             "top-[1.7rem] -translate-y-1/2 lg:text-desktop-font-size-body-md text-mobile-font-size-body-md text-text-colour-passive": !shouldFloatLabel && visualState !== 'Disabled',
             "px-1 bg-[linear-gradient(180deg,white_50%,#faf9f5_50%)]": visualState === 'Selected',
-            "-top-[0.5rem] text-xs font-medium left-[0.5rem] bg-transparent": shouldFloatLabel && visualState === "Disabled",
+            "-top-[0.5rem] text-xs font-medium left-[0.5rem] bg-transparent text-text-colour-disabled": shouldFloatLabel && visualState === "Disabled",
         }
     );
 
@@ -101,8 +101,7 @@ export const Dropdown = ({
         "text-left text-sm truncate pl-2 pt-1",
         {
             "text-text-colour-body": selectedOption && visualState !== "Disabled",
-            // "text-": !selectedOption && visualState !== "Disabled",
-            "text-gray-400": visualState === "Disabled",
+            "text-text-colour-disabled": visualState === "Disabled",
             "hidden": visualState === 'Default'
         }
     );

@@ -1,6 +1,4 @@
-// import { useState } from 'preact/hooks'
-// import preactLogo from './assets/preact.svg'
-// import viteLogo from '/vite.svg'
+
 import './app.css'
 import { Button } from './stories/button'
 
@@ -16,28 +14,26 @@ export function App() {
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-heading">Theme Test</h2>
 
-          {/* Test Brand A (default) */}
           <div className="p-6 bg-white rounded-lg space-y-4">
             <h3 className="text-xl font-semibold">Brand A (Default)</h3>
             <div className="flex gap-4">
-              <div className="w-20 h-20 rounded-lg" style={{ backgroundColor: 'var(--color-primary-default)' }}></div>
-              <div className="w-20 h-20 rounded-lg" style={{ backgroundColor: 'var(--color-surface-action-primary)' }}></div>
-              <div className="w-20 h-20 rounded-lg bg-surface-action-secondary"></div>
+              <div className="w-20 h-20 rounded-lg bg-surface-colour-action-primary"></div>
+              <div className="w-20 h-20 rounded-lg bg-surface-colour-action-secondary"></div>
+              <div className="w-20 h-20 rounded-lg bg-surface-colour-accent"></div>
             </div>
-            <p className="text-body">
+            <p className="text-body-lg-desktop text-text-colour-brand">
               Primary color should be orange (#fc4c02)
             </p>
             <Button variant='secondary' size='medium'>Test button</Button>
           </div>
 
-          {/* Test Brand B */}
-          <div className="p-6 bg-white rounded-lg space-y-4" data-theme="brandB">
+          <div className="p-6 bg-white rounded-lg space-y-4">
             <h3 className="text-xl font-semibold">Brand B</h3>
             <div className="flex gap-4">
-              <div className="w-20 h-20 rounded-lg" style={{ backgroundColor: 'var(--color-primary-default)' }}></div>
-              <div className="w-20 h-20 rounded-lg" style={{ backgroundColor: 'var(--color-surface-action-primary)' }}></div>
+              <div className="w-20 h-20 rounded-lg bg-primitives-colour-brand-brandb-accent-burgundy"></div>
+              <div className="w-20 h-20 rounded-lg bg-primitives-colour-brand-brandb-accent-spritz" ></div>
             </div>
-            <p className="text-body">
+            <p className="text-primitives-colour-brand-brandb-accent-spritz">
               Primary color should be cherry/burgundy (#901438)
             </p>
           </div>

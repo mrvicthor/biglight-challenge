@@ -95,7 +95,7 @@ export const TertiaryDisabled: Story = {
     },
 };
 
-// All Variants Overview
+
 export const AllVariants: Story = {
     render: () => (
         <div className="space-y-8 p-8">

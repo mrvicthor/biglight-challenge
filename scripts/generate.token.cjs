@@ -12,7 +12,7 @@ if (!fs.existsSync(tokensPath)) {
 
 const tokens = JSON.parse(fs.readFileSync(tokensPath, 'utf8'));
 
-// Helper to find a token value anywhere in the token tree
+
 function findToken(tokenPath, allTokens) {
     const cleanPath = tokenPath.replace(/[{}]/g, '');
     const parts = cleanPath.split('.');
@@ -40,7 +40,7 @@ function findToken(tokenPath, allTokens) {
     return null;
 }
 
-// Recursive resolver
+
 function resolve(value, allTokens, depth = 0, visited = new Set()) {
     if (depth > 20) return value;
     if (typeof value !== 'string') return value;
@@ -62,7 +62,7 @@ function resolve(value, allTokens, depth = 0, visited = new Set()) {
     return foundValue;
 }
 
-// Convert a nested path to CSS variable name
+
 function pathToCssVar(path) {
     return path
         .map(p => p.toLowerCase())
@@ -72,19 +72,18 @@ function pathToCssVar(path) {
         .join('-');
 }
 
-// Counter for logging
+
 let tokenCount = 0;
 
-// Recursively extract ALL tokens from a nested structure
+
 function extractAllTokens(obj, currentPath = [], results = {}, parentKey = '') {
     if (!obj || typeof obj !== 'object') return results;
 
-    // Check if this object has a 'value' property (it's a leaf token)
+
     if (obj.value !== undefined && obj.type) {
         const cssVarName = pathToCssVar(currentPath);
         const resolvedValue = resolve(obj.value, tokens);
 
-        // Add appropriate suffix based on type
         let finalValue = resolvedValue;
         if (obj.type === 'number' && typeof resolvedValue === 'number') {
             finalValue = `${resolvedValue}px`;
@@ -99,7 +98,6 @@ function extractAllTokens(obj, currentPath = [], results = {}, parentKey = '') {
 
         tokenCount++;
 
-        // Log every 50th token to show progress
         if (tokenCount % 50 === 0) {
             console.log(`  ... extracted ${tokenCount} tokens so far`);
         }
@@ -107,13 +105,12 @@ function extractAllTokens(obj, currentPath = [], results = {}, parentKey = '') {
         return results;
     }
 
-    // Otherwise, recursively traverse ALL properties
+
     for (const [key, value] of Object.entries(obj)) {
-        // Skip metadata fields
         if (key === '$themes' || key === '$metadata') continue;
 
         if (typeof value === 'object' && value !== null) {
-            // Recursively extract from this nested object
+
             extractAllTokens(value, [...currentPath, key], results, key);
         }
     }
@@ -121,7 +118,6 @@ function extractAllTokens(obj, currentPath = [], results = {}, parentKey = '') {
     return results;
 }
 
-// Extract tokens for a specific brand
 function extractBrandTokens(brand) {
     const mapped = tokens[`Mapped/${brand}`];
     const alias = tokens[`Alias colours/${brand}`];
@@ -152,18 +148,12 @@ function extractGlobalTokens() {
     const globalTokens = {};
 
     if (tokens['Primitives/Default']) {
-        console.log('  📦 Extracting Primitives/Default...');
-        const beforeCount = tokenCount;
         const primitiveTokens = extractAllTokens(tokens['Primitives/Default'], ['primitives']);
-        console.log(`     Found ${tokenCount - beforeCount} tokens`);
         Object.assign(globalTokens, primitiveTokens);
     }
 
     if (tokens['Responsive/Desktop']) {
-        console.log('  📦 Extracting Responsive/Desktop...');
-        const beforeCount = tokenCount;
         const desktopTokens = extractAllTokens(tokens['Responsive/Desktop'], ['desktop']);
-        console.log(`     Found ${tokenCount - beforeCount} tokens`);
 
         // Log some Label examples to verify
         const labelTokens = Object.keys(desktopTokens).filter(k => k.includes('label'));
@@ -185,7 +175,6 @@ function extractGlobalTokens() {
     return globalTokens;
 }
 
-// Group tokens by category
 function groupTokens(tokens) {
     const groups = {
         color: {},
@@ -218,17 +207,6 @@ function groupTokens(tokens) {
     return groups;
 }
 
-// Helper to find the best matching token
-function findBestMatch(tokens, candidates) {
-    for (const candidate of candidates) {
-        if (tokens[candidate]) {
-            return tokens[candidate].value;
-        }
-    }
-    return null;
-}
-
-// Generate CSS that automatically switches themes but keeps all original variables
 function generateThemeAwareCSS() {
     console.log('\n📊 EXTRACTING ALL TOKENS...\n');
 
@@ -270,7 +248,7 @@ function generateThemeAwareCSS() {
         }
     };
 
-    // Generate :root with Brand A (exactly like before)
+
     css += ':root {\n';
     css += '  /* ===== BRAND A ===== */\n\n';
     writeTokenGroup('Colors', brandAGroups.color);
@@ -281,7 +259,7 @@ function generateThemeAwareCSS() {
     writeTokenGroup('Other', brandAGroups.other);
     css += '}\n\n';
 
-    // Generate Brand B overrides (exactly like before)
+
     css += '[data-theme="brandB"] {\n';
     css += '  /* ===== BRAND B ===== */\n\n';
     writeTokenGroup('Colors', brandBGroups.color);
@@ -292,7 +270,6 @@ function generateThemeAwareCSS() {
     writeTokenGroup('Other', brandBGroups.other);
     css += '}\n\n';
 
-    // Add automatic body styling that responds to theme changes
     css += `/* ===== AUTOMATIC THEME APPLICATION ===== */
 
 /* Body automatically adapts to theme changes */
@@ -326,8 +303,6 @@ h1, h2, h3, h4, h5, h6 {
     return css;
 }
 
-// Generate Tailwind config with your EXACT existing structure
-// Generate Tailwind config with your EXACT existing structure (FIXED)
 function generateTailwindConfig() {
     const globalTokens = extractGlobalTokens();
     const brandATokens = extractBrandTokens('BrandA');
@@ -411,16 +386,15 @@ function generateTailwindConfig() {
             const cleanKey = key.replace(/.*border-radius-/, '');
             config.theme.extend.borderRadius[cleanKey] = `var(--${key})`;
         } else if (key.includes('primitives-font-brand')) {
-            // FIXED: Font family handling
             if (key.includes('font-family')) {
                 const parts = key.split('-');
                 const brand = parts.includes('branda') ? 'brand-a' : 'brand-b';
-                const type = parts[parts.length - 1]; // heading, body, sub-heading
+                const type = parts[parts.length - 1];
                 config.theme.extend.fontFamily[`${brand}-${type}`] = `var(--${key})`;
             } else if (key.includes('font-weight')) {
                 const parts = key.split('-');
                 const brand = parts.includes('branda') ? 'brand-a' : 'brand-b';
-                const weight = parts.slice(-1)[0]; // light, regular, bold, etc.
+                const weight = parts.slice(-1)[0];
                 config.theme.extend.fontWeight[`${brand}-${weight}`] = `var(--${key})`;
             }
         } else if (key.includes('font-font-family')) {
@@ -428,11 +402,9 @@ function generateTailwindConfig() {
             const cleanKey = key.replace(/^font-font-family-/, '');
             config.theme.extend.fontFamily[cleanKey] = `var(--${key})`;
         } else if (key.includes('font-font-weight')) {
-            // FIXED: Mapped font weight handling
             const cleanKey = key.replace(/^font-font-weight-/, '');
             config.theme.extend.fontWeight[cleanKey] = `var(--${key})`;
         } else if (key.includes('desktop-icon') || key.includes('mobile-icon')) {
-            // FIXED: Icon size handling
             const cleanKey = key.replace(/^(desktop|mobile)-/, '');
             const breakpoint = key.includes('desktop') ? 'desktop' : 'mobile';
             config.theme.extend.width[`${cleanKey}-${breakpoint}`] = `var(--${key})`;
@@ -443,7 +415,6 @@ function generateTailwindConfig() {
     return `/** @type {import('tailwindcss').Config} */\nexport default ${JSON.stringify(config, null, 2)};`;
 }
 
-// Helper function to add nested properties
 function addNestedProperty(target, pathParts, value) {
     let current = target;
 
@@ -460,7 +431,6 @@ function addNestedProperty(target, pathParts, value) {
     current[finalKey] = value;
 }
 
-// Main execution
 try {
     const indexCssPath = path.join(__dirname, '../src/index.css');
     const css = generateThemeAwareCSS();
@@ -479,21 +449,8 @@ ${css}
     const tailwindConfig = generateTailwindConfig();
     fs.writeFileSync(path.join(__dirname, '../tailwind.config.js'), tailwindConfig);
     console.log('✅ Updated tailwind.config.js (kept existing structure)');
-
-
-
     console.log('\n🎉 DONE! Your existing HTML/CSS will work exactly the same!');
-    console.log('\n📋 What this gives you:');
-    console.log('   ✅ All your existing classes work unchanged');
-    console.log('   ✅ Same Tailwind config structure');
-    console.log('   ✅ Automatic theme switching with data-theme attribute');
-    console.log('   ✅ All deeply nested tokens (including labels)');
-    console.log('   ✅ Simple Storybook integration');
-    console.log('\n🚀 Your existing code like this still works:');
-    console.log('   <div className="bg-surface-colour-page text-text-colour-body">');
-    console.log('   <button className="bg-alias-primary">Primary Button</button>');
-    console.log('\n   But now just add data-theme="brandB" and everything switches automatically!');
-    console.log('\n🎯 Test it: Toggle themes in Storybook - zero code changes needed!\n');
+
 
 } catch (error) {
     console.error('\n❌ Error:', error);
