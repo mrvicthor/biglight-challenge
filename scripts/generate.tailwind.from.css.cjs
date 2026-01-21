@@ -11,15 +11,6 @@ if (!fs.existsSync(indexCssPath)) {
 
 const css = fs.readFileSync(indexCssPath, 'utf8');
 
-// Grab vars from :root block (enough, since brandB uses same var names)
-const rootMatch = css.match(/:root\s*{([\s\S]*?)}/m);
-if (!rootMatch) {
-    console.error('❌ Could not find :root { ... } in src/index.css');
-    process.exit(1);
-}
-
-const rootBody = rootMatch[1];
-
 // Matches: --var-name: value;
 const varRegex = /--([a-z0-9-]+)\s*:\s*([^;]+);/gi;
 
@@ -29,14 +20,6 @@ while ((m = varRegex.exec(css)) !== null) {
     vars[`--${m[1]}`] = m[2].trim();
 }
 
-// Helpers
-const setDeep = (obj, keys, value) => {
-    let cur = obj;
-    keys.forEach((k, i) => {
-        if (i === keys.length - 1) cur[k] = value;
-        else cur = cur[k] = cur[k] ?? {};
-    });
-};
 
 const tailwindExtend = {
     colors: {},

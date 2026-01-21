@@ -19,7 +19,7 @@ export function Button({
     const baseStyles =
         'px-4 flex items-center gap-2 justify-between rounded-round font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
     const disabledCommon =
-        'disabled:cursor-not-allowed disabled:pointer-events-none disabled:bg-surface-disabled-dark disabled:text-text-disabled';
+        'disabled:cursor-not-allowed disabled:pointer-events-none disabled:bg-surface-colour-disabled-dark disabled:text-text-colour-action-disabled';
 
     const sizes: Record<NonNullable<ButtonProps['size']>, string> = {
         medium: 'w-[10.75rem] h-[3rem] text-body-md py-4',
@@ -28,15 +28,15 @@ export function Button({
 
     const variants: Record<NonNullable<ButtonProps['variant']>, string> = {
         primary:
-            'bg-surface-action-primary text-text-action-on-primary hover:opacity-90 active:opacity-80 hover:bg-surface-action-secondary hover:text-text-inverse',
+            'bg-surface-colour-action-primary text-text-colour-action-onprimary hover:opacity-90 active:opacity-80 hover:bg-surface-colour-action-secondary hover:text-text-colour-action-inverse',
         secondary:
-            'bg-surface-action-secondary hover:bg-surface-action-primary text-text-action-on-secondary hover:opacity-90 active:opacity-80 hover:text-text-action-on-primary',
+            'bg-surface-colour-action-secondary hover:bg-surface-colour-action-primary text-text-colour-action-onsecondary hover:opacity-90 active:opacity-80 hover:text-text-colour-action-onprimary',
         tertiary:
-            'bg-transparent text-text-action-on-tertiary border-md border-border-primary hover:bg-surface-action-secondary active:bg-gray-100 hover:text-text-action-inverse',
+            'bg-surface-colour-action-inverse text-text-action-on-tertiary border-md border-border-colour-primary hover:bg-surface-colour-action-secondary active:bg-gray-100 hover:text-text-colour-action-inverse',
     }
 
     const tertiaryDisabled =
-        'disabled:text-text-disabled hover:text-text-on-secondary disabled:border-border-disabled disabled:bg-surface-secondary'
+        'disabled:text-text-colour-disabled disabled:border-border-colour-disabled disabled:bg-surface-colour-action-inverse'
 
     const className = [
         baseStyles,

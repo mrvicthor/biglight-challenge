@@ -40,7 +40,7 @@ const meta: Meta<ButtonProps> = {
 export default meta;
 type Story = StoryObj<ButtonProps>;
 
-// Primary Button
+
 export const Primary: Story = {
     args: {
         variant: 'primary',
@@ -50,7 +50,6 @@ export const Primary: Story = {
     },
 };
 
-// Secondary Button
 export const Secondary: Story = {
     args: {
         variant: 'secondary',
@@ -59,7 +58,7 @@ export const Secondary: Story = {
     },
 };
 
-// Tertiary Button
+
 export const Tertiary: Story = {
     args: {
         variant: 'tertiary',
@@ -68,7 +67,7 @@ export const Tertiary: Story = {
     },
 };
 
-// Disabled States
+
 export const PrimaryDisabled: Story = {
     args: {
         variant: 'primary',
@@ -121,18 +120,6 @@ export const AllVariants: Story = {
                     <Button size='small' variant="primary" disabled>Primary</Button>
                     <Button size='small' variant="secondary" disabled>Secondary</Button>
                     <Button size='small' variant="tertiary" disabled>Tertiary</Button>
-                </div>
-            </div>
-
-            <div>
-                <h3 className="text-lg font-semibold mb-4 text-text-heading">Different Sizes</h3>
-                <div className="flex gap-4 flex-wrap items-center">
-                    <Button size='medium' variant="primary">Regular Button</Button>
-                    <Button size='medium' variant="primary">Long Text Button Example</Button>
-                    <Button size='medium' variant="primary">Short</Button>
-                    <Button size='small' variant="primary">Regular Button</Button>
-                    <Button size='small' variant="primary">Long Text Button Example</Button>
-                    <Button size='small' variant="primary">Short</Button>
                 </div>
             </div>
         </div>

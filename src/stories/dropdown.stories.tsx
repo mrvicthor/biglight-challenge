@@ -1,7 +1,8 @@
 
-import { useState } from "preact/hooks";
+
 import type { Meta, StoryObj } from "@storybook/preact";
-import { Dropdown, type DropdownOption } from "./dropdown";
+import { Dropdown } from "./dropdown";
+import type { DropdownOption } from "../types";
 
 const sampleOptions: DropdownOption[] = [
     { value: "retail", label: "Retail Store Owner" },
@@ -9,6 +10,7 @@ const sampleOptions: DropdownOption[] = [
     { value: "hospitality", label: "Hospitality" },
     { value: "catering", label: "Catering & Events" },
     { value: "online", label: "Online/Delivery Only" },
+    { value: "offline", label: "Pickup" },
 ];
 
 const optionsWithDisabled: DropdownOption[] = [
@@ -33,7 +35,7 @@ const meta: Meta<typeof Dropdown> = {
     argTypes: {
         state: {
             control: "select",
-            options: ["default", "focus", "selected", "disabled", "opened"],
+            options: ["Default", "Focus", "Selected", "Disabled", "Opened"],
             description: "Visual state of the dropdown",
         },
         value: {
@@ -88,15 +90,15 @@ type Story = StoryObj<typeof Dropdown>;
 export const Default: Story = {
     args: {
         id: "dropdown-default",
-        state: "default",
+        state: "Default",
     },
 };
 
-// Focus State
+
 export const Focus: Story = {
     args: {
         id: "dropdown-focus",
-        state: "focus",
+        state: "Focus",
     },
     parameters: {
         docs: {
@@ -107,11 +109,11 @@ export const Focus: Story = {
     },
 };
 
-// Selected State
+
 export const Selected: Story = {
     args: {
         id: "dropdown-selected",
-        state: "selected",
+        state: "Selected",
         value: "retail",
     },
     parameters: {
@@ -123,11 +125,11 @@ export const Selected: Story = {
     },
 };
 
-// Disabled State
+
 export const Disabled: Story = {
     args: {
         id: "dropdown-disabled",
-        state: "disabled",
+        state: "Disabled",
         value: "retail",
     },
     parameters: {
@@ -139,11 +141,11 @@ export const Disabled: Story = {
     },
 };
 
-// Opened State
+
 export const Opened: Story = {
     args: {
         id: "dropdown-opened",
-        state: "opened",
+        state: "Opened",
     },
     parameters: {
         docs: {
@@ -154,7 +156,7 @@ export const Opened: Story = {
     },
 };
 
-// With Disabled Options
+
 export const WithDisabledOptions: Story = {
     args: {
         id: "dropdown-disabled-options",
@@ -169,22 +171,7 @@ export const WithDisabledOptions: Story = {
     },
 };
 
-// Without Icon
-export const WithoutIcon: Story = {
-    args: {
-        id: "dropdown-no-icon",
-        showIcon: false,
-    },
-    parameters: {
-        docs: {
-            description: {
-                story: "Dropdown without the leading clock icon.",
-            },
-        },
-    },
-};
 
-// Required Field
 export const Required: Story = {
     args: {
         id: "dropdown-required",
@@ -200,7 +187,6 @@ export const Required: Story = {
     },
 };
 
-// With Error
 export const WithError: Story = {
     args: {
         id: "dropdown-error",
@@ -216,105 +202,3 @@ export const WithError: Story = {
     },
 };
 
-// Interactive Example
-export const Interactive: Story = {
-    render: (args) => {
-        const [value, setValue] = useState<string | undefined>(undefined);
-
-        return (
-            <div class="space-y-4">
-                <Dropdown
-                    {...args}
-                    label="label"
-                    options={sampleOptions}
-                    id="dropdown-interactive"
-                    value={value}
-                    onValueChange={setValue}
-                    state="Default"
-                />
-                <p class="text-sm text-gray-600">
-                    Selected value: <code class="bg-gray-100 px-2 py-1 rounded">{value || "none"}</code>
-                </p>
-            </div>
-        );
-    },
-    parameters: {
-        docs: {
-            description: {
-                story: "An interactive example showing the dropdown in action.",
-            },
-        },
-    },
-};
-
-// All States Overview
-export const AllStates: Story = {
-    render: () => (
-        <div class="grid grid-cols-2 gap-8 p-4">
-            <div class="space-y-2">
-                <p class="text-sm font-medium text-gray-600">Default</p>
-                <Dropdown
-                    id="dropdown-all-default"
-                    label="Label"
-                    options={sampleOptions}
-                    helperText="required"
-                    state="Default"
-                />
-            </div>
-
-            <div class="space-y-2">
-                <p class="text-sm font-medium text-gray-600">Focus</p>
-                <Dropdown
-                    id="dropdown-all-focus"
-                    label="Label"
-                    options={sampleOptions}
-                    state="Focus"
-                    helperText="required"
-                />
-            </div>
-
-            <div class="space-y-2">
-                <p class="text-sm font-medium text-gray-600">Selected</p>
-                <Dropdown
-                    id="dropdown-all-selected"
-                    label="Label"
-                    options={sampleOptions}
-                    value="retail"
-                    helperText="required"
-                    state="Selected"
-                />
-            </div>
-
-            <div class="space-y-2">
-                <p class="text-sm font-medium text-gray-600">Disabled</p>
-                <Dropdown
-                    id="dropdown-all-disabled"
-                    label="Label"
-                    options={sampleOptions}
-                    value="retail"
-                    state="Disabled"
-                    helperText="required"
-                />
-            </div>
-
-            <div class="space-y-2 col-span-2">
-                <p class="text-sm font-medium text-gray-600">Opened</p>
-                <Dropdown
-                    id="dropdown-all-opened"
-                    label="Label"
-                    options={sampleOptions}
-                    state="Opened"
-                    helperText="required"
-                />
-            </div>
-        </div>
-    ),
-    parameters: {
-        layout: "padded",
-        docs: {
-            description: {
-                story: "Overview of all dropdown states side by side.",
-            },
-        },
-    },
-};
