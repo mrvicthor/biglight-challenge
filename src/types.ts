@@ -5,3 +5,5 @@ export interface DropdownOption {
 }
 
 export type DropdownState = 'Default' | 'Focus' | 'Selected' | 'Disabled' | 'Opened'
+
+export type InputState = 'Default' | 'Focus' | 'Filled' | 'Disabled' | 'Error' | 'Success';

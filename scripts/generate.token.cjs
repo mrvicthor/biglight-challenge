@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-console.log('🔄 Generating theme-aware design tokens (keeping existing structure)...\n');
-
 const tokensPath = path.join(__dirname, '../figma-tokens.json');
 
 if (!fs.existsSync(tokensPath)) {
@@ -98,10 +96,6 @@ function extractAllTokens(obj, currentPath = [], results = {}, parentKey = '') {
 
         tokenCount++;
 
-        if (tokenCount % 50 === 0) {
-            console.log(`  ... extracted ${tokenCount} tokens so far`);
-        }
-
         return results;
     }
 
@@ -125,25 +119,18 @@ function extractBrandTokens(brand) {
     const allTokens = {};
 
     if (alias) {
-        console.log(`  📦 Extracting Alias colours/${brand}...`);
-        const beforeCount = tokenCount;
         const aliasTokens = extractAllTokens(alias, ['alias']);
-        console.log(`     Found ${tokenCount - beforeCount} tokens`);
         Object.assign(allTokens, aliasTokens);
     }
 
     if (mapped) {
-        console.log(`  📦 Extracting Mapped/${brand}...`);
-        const beforeCount = tokenCount;
         const mappedTokens = extractAllTokens(mapped, []);
-        console.log(`     Found ${tokenCount - beforeCount} tokens`);
         Object.assign(allTokens, mappedTokens);
     }
 
     return allTokens;
 }
 
-// Extract global tokens
 function extractGlobalTokens() {
     const globalTokens = {};
 
@@ -154,21 +141,11 @@ function extractGlobalTokens() {
 
     if (tokens['Responsive/Desktop']) {
         const desktopTokens = extractAllTokens(tokens['Responsive/Desktop'], ['desktop']);
-
-        // Log some Label examples to verify
-        const labelTokens = Object.keys(desktopTokens).filter(k => k.includes('label'));
-        if (labelTokens.length > 0) {
-            console.log(`     ✓ Label tokens found: ${labelTokens.slice(0, 3).join(', ')}${labelTokens.length > 3 ? '...' : ''}`);
-        }
-
         Object.assign(globalTokens, desktopTokens);
     }
 
     if (tokens['Responsive/Mobile']) {
-        console.log('  📦 Extracting Responsive/Mobile...');
-        const beforeCount = tokenCount;
         const mobileTokens = extractAllTokens(tokens['Responsive/Mobile'], ['mobile']);
-        console.log(`     Found ${tokenCount - beforeCount} tokens`);
         Object.assign(globalTokens, mobileTokens);
     }
 
@@ -208,7 +185,6 @@ function groupTokens(tokens) {
 }
 
 function generateThemeAwareCSS() {
-    console.log('\n📊 EXTRACTING ALL TOKENS...\n');
 
     tokenCount = 0;
     const globalTokens = extractGlobalTokens();
@@ -290,7 +266,6 @@ h1, h2, h3, h4, h5, h6 {
 function generateTailwindConfig() {
     const globalTokens = extractGlobalTokens();
     const brandATokens = extractBrandTokens('BrandA');
-    const brandBTokens = extractBrandTokens('BrandB');
     const allBrandATokens = { ...globalTokens, ...brandATokens };
 
     const config = {
@@ -301,7 +276,6 @@ function generateTailwindConfig() {
         "theme": {
             "extend": {
                 "colors": {
-                    // Generate the exact same nested structure you have
                     "alias": {},
                     "border-colour": {},
                     "icon-colour": {},

@@ -103,3 +103,35 @@ The theme system uses CSS custom properties that automatically switch based on t
 - **Tailwind CSS** - Utility-first CSS framework
 - **Vite** - Fast build tool
 - **TypeScript** - Type-safe JavaScript
+
+## Task 2
+
+### 1) How do the design tokens (from the JSON) get into your code?
+
+Design tokens live in a JSON file and are converted into CSS variables via a script. The script generates a stylesheet (tokens → :root + theme scopes) that my components consume through Tailwind classes mapped to those CSS variables (e.g. bg-surface-colour-action-primary → var(--surface-colour-action-primary)).
+
+### 2) How do you handle multiple themes (Brand A vs Brand B)?
+
+I handle Brand A vs Brand B using a Storybook decorator that switches a theme attribute (e.g. data-theme="brandB") on a wrapper element. Because the tokens are expressed as CSS variables, switching the attribute swaps the variable values and the UI updates without changing component code.
+
+### 3) If the tokens in the JSON change, what happens in your code?
+
+If tokens change (renamed, removed, or structure changes), it can break styling because the generated CSS variable names may no longer match what Tailwind classes expect. To reduce this risk, I can:
+
+validate the token JSON with a strict schema/type (TypeScript types + runtime validation with something like Zod),
+
+fail the build if required tokens are missing,
+
+and optionally generate a “token map” or types from the JSON so usage stays in sync.
+
+### 4) How maintainable and automated is your approach?
+
+Right now it’s semi-manual because a script needs to be run to regenerate the CSS variables. It’s maintainable, but can be improved by automating token generation and validation in CI (e.g. GitHub Actions):
+
+run the token build script on PRs,
+
+run schema validation,
+
+and block merges if generated files are out of date or tokens are missing.
+
+

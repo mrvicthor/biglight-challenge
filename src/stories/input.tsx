@@ -2,8 +2,9 @@ import { useCallback, useEffect, useState } from 'preact/hooks';
 import CloseIcon from './closeIcon';
 import CheckIcon from './checkIcon';
 import clsx from 'clsx';
+import type { InputState } from '../types';
 
-type InputState = 'Default' | 'Focus' | 'Filled' | 'Disabled' | 'Error' | 'Success';
+
 
 export interface InputProps {
     label?: string;
@@ -70,7 +71,7 @@ export function Input(props: InputProps) {
         onChange?.('');
     }, [onChange]);
 
-    // NOW TRACKED: All states!
+
     const getVisualState = (): InputState => {
         if (disabled) return 'Disabled';
         if (error) return 'Error';
@@ -88,8 +89,8 @@ export function Input(props: InputProps) {
         "absolute transition-all duration-200 pointer-events-none bg-surface-colour-secondary z-10",
         {
             "-top-2.5 text-sm  font-medium left-[0.5rem] px-1": shouldFloatLabel && visualState !== 'Disabled',
-            "top-3.5 text-base text-text-colour-passive": !shouldFloatLabel && visualState !== 'Disabled',  // Adjusted positioning
-            "bg-[linear-gradient(180deg,white_50%,#faf9f5_50%)]": visualState === 'Focus',  // Changed from 'Selected' (typo?)
+            "top-3.5 text-base text-text-colour-passive": !shouldFloatLabel && visualState !== 'Disabled',
+            "bg-[linear-gradient(180deg,white_50%,#faf9f5_50%)]": visualState === 'Focus',
             "-top-2 text-xs font-medium left-[0.5rem] bg-transparent": shouldFloatLabel && visualState === 'Disabled',
             "-top-2.5 px-1 left-[0.4rem] bg-transparent text-text-colour-disabled": visualState === 'Disabled',
             "text-text-colour-error": visualState === 'Error',
@@ -102,15 +103,11 @@ export function Input(props: InputProps) {
         'peer block w-full h-full pl-3 pr-6 py-2.5 text-sm rounded-md transition-colors duration-200 ease-in-out outline-none',
         className,
         {
-            // Disabled
             'bg-surface-colour-disabled-dark placeholder-text-text-colour-disabled cursor-not-allowed': disabled,
-            // Error
             'border-alias-error-dark border-lg bg-surface-colour-secondary text-alias-error-dark placeholder-[#9e1f28] ': error && !disabled,
-            // Success
             'bg-surface-colour-secondary text-text-colour-body placeholder-text-colour-body border-colour-secondary border-md': success && !error && !disabled,
             'border-border-colour-passive border-xs': isFocused,
             "bg-surface-colour-page border-border-colour-secondary": visualState === 'Filled',
-            // Default/Focus/Filled
             'border-border-colour-passive border-md placeholder-gray-400': !disabled && !error && !success && !isFocused,
         }
     );

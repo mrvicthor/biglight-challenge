@@ -153,31 +153,6 @@ export const Interactive: Story = {
 };
 
 
-export const ThemeComparison: Story = {
-    render: () => (
-        <div className="space-y-8 p-8">
-            <div>
-                <h3 className="text-lg font-semibold mb-4">Brand A (Default)</h3>
-                <div className="flex gap-4">
-                    <Button size='medium' variant="primary">Primary</Button>
-                    <Button size='medium' variant="secondary">Secondary</Button>
-                    <Button size='medium' variant="tertiary">Tertiary</Button>
-                </div>
-            </div>
-
-            <div data-theme="brandB">
-                <h3 className="text-lg font-semibold mb-4">Brand B</h3>
-                <div className="flex gap-4">
-                    <Button size='medium' variant="primary">Primary</Button>
-                    <Button size='medium' variant="secondary">Secondary</Button>
-                    <Button size='medium' variant="tertiary">Tertiary</Button>
-                </div>
-            </div>
-        </div>
-    ),
-};
-
-
 export const AccessibilityTest: Story = {
     render: () => (
         <div className="space-y-6 p-8">
