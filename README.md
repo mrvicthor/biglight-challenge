@@ -92,7 +92,6 @@ The theme system uses CSS custom properties that automatically switch based on t
 
 - `src/stories/` - Component implementations and Storybook stories
 - `src/hooks/` - Custom React/Preact hooks
-- `src/styles/` - Design tokens and styling configuration
 - `scripts/` - Build scripts for generating tokens
 - `.storybook/` - Storybook configuration
 

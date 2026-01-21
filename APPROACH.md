@@ -37,9 +37,9 @@
 - Token regen is manual (`npm run tokens`); a CI hook or Git pre-commit could automate and verify diffs.
 - Limited test coverage: relies mostly on Storybook for validation; needs unit/interaction tests and accessibility checks.
 - No runtime theming API beyond `data-theme`; brand switching is global-per-container, not per-component override.
-- Not fully production-hardened for perf (tree-shaking, bundle size budgets) or for multi-brand theming at scale (e.g., dynamic brand loading at runtime).
+- Not fully production-hardened for performance (tree-shaking, bundle size budgets) or for multi-brand theming at scale (e.g., dynamic brand loading at runtime).
 
 ## AI usage note
-I used ChatGPT as a support tool during development. It was mainly used to clarify concepts, sanity-check implementation approaches, and help refine explanations and documentation.
+I used ChatGPT and Claude as a support tool during development. It was mainly used to clarify concepts, sanity-check implementation approaches, and help refine explanations and documentation.
 
 All architectural decisions, component implementation, styling, and integration were designed and written by me. AI was not used to generate final production code without review; any suggestions were adapted and validated manually.
