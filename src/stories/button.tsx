@@ -17,13 +17,13 @@ export function Button({
     ...props
 }: ButtonProps) {
     const baseStyles =
-        'px-4 flex items-center gap-2 justify-between rounded-round font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
+        ' flex items-center gap-2 px-4 w-full justify-between rounded-round font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
     const disabledCommon =
         'disabled:cursor-not-allowed disabled:pointer-events-none disabled:bg-surface-colour-disabled-dark disabled:text-text-colour-action-disabled';
 
     const sizes: Record<NonNullable<ButtonProps['size']>, string> = {
-        medium: 'w-[10.75rem] h-[3rem] text-body-md py-4',
-        small: 'w-[9.5625rem] h-[2.4375rem] text-body-sm py-3',
+        medium: 'text-action-md-mobile h-12',
+        small: 'text-action-sm-mobile h-[2.4375rem]',
     }
 
     const variants: Record<NonNullable<ButtonProps['variant']>, string> = {
@@ -48,6 +48,6 @@ export function Button({
         .filter(Boolean)
         .join(' ')
 
-    return (<button className={className} disabled={disabled} onClick={onClick} aria-disabled={disabled} {...props}><ChevronLeft />{children}<ChevronRight /></button>)
+    return (<button className={className} disabled={disabled} onClick={onClick} aria-disabled={disabled} {...props}><ChevronLeft className={`${size === 'medium' ? 'w-icon-sm-desktop' : 'w-icon-sm-mobile'}`} />{children}<ChevronRight className={`${size === 'medium' ? 'w-icon-sm-desktop' : 'w-icon-sm-mobile'}`} /></button>)
 }
 

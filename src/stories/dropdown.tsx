@@ -130,82 +130,80 @@ export const Dropdown = ({
             }
         );
     return (
-        <div className="bg-white p-16">
-
-            <div className={containerStyles} ref={containerRef}>
-                <button
-                    ref={triggerRef}
-                    type='button'
-                    id={id}
-                    className={triggerStyles}
-                    onClick={toggleDropdown}
-                    onKeyDown={handleTriggerKeyDown}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    disabled={isDisabled}
-                    aria-haspopup='listbox'
-                    aria-expanded={isOpen}
-                    aria-labelledby={labelId}
-                    aria-describedby={helperText ? helperId : undefined}
-                    aria-required={required}
-                    aria-invalid={!!errorMessage}>
-                    <div className="flex items-center gap-2 pt-3 pb-2">
-                        <span id={labelId} className={labelStyles}>
-                            {label}
-                        </span>
-
-                        <span
-                            className={clsx("flex-shrink-0")}
-                        >
-                            <ClockIcon />
-                        </span>
-                    </div>
-                    {selectOption.length && !isFocused && !isOpen && (<span className={valueStyles}>
-                        {selectedOption?.label || placeholder}
-                    </span>)}
-                    <span
-                        className={clsx("flex-shrink-0 ml-auto")}
-                    >
-                        <ChevronDown isOpen={isOpen || isFocused} />
+        <div className={containerStyles} ref={containerRef}>
+            <button
+                ref={triggerRef}
+                type='button'
+                id={id}
+                className={triggerStyles}
+                onClick={toggleDropdown}
+                onKeyDown={handleTriggerKeyDown}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                disabled={isDisabled}
+                aria-haspopup='listbox'
+                aria-expanded={isOpen}
+                aria-labelledby={labelId}
+                aria-describedby={helperText ? helperId : undefined}
+                aria-required={required}
+                aria-invalid={!!errorMessage}>
+                <div className="flex items-center gap-2 pt-3 pb-2">
+                    <span id={labelId} className={labelStyles}>
+                        {label}
                     </span>
 
-
-                </button>
-                {(helperText || errorMessage) && !isOpen && (
-                    <p id={helperId} className={helperStyles} role={errorMessage ? "alert" : undefined}>
-                        <span className="text-text-colour-warning ml-0.5">*</span>{errorMessage || helperText}
-                    </p>
-                )}
-                <ul
-                    ref={listboxRef}
-                    id={listboxId}
-                    className={listboxStyles}
-                    role="listbox"
-                    aria-labelledby={labelId}
-                    aria-activedescendant={
-                        activeIndex >= 0 ? `${id}-option-${activeIndex}` : undefined
-                    }
-                    tabIndex={-1}
-                    onKeyDown={handleListboxKeyDown}
+                    <span
+                        className={clsx("flex-shrink-0")}
+                    >
+                        <ClockIcon />
+                    </span>
+                </div>
+                {selectOption.length && !isFocused && !isOpen && (<span className={valueStyles}>
+                    {selectedOption?.label || placeholder}
+                </span>)}
+                <span
+                    className={clsx("flex-shrink-0 ml-auto")}
                 >
-                    {options.map((option, index) => (
-                        <li
-                            key={option.value}
-                            ref={(el) => { (optionRefs.current[index] = el) }}
-                            id={`${id}-option-${index}`}
-                            className={getOptionStyles(option, index)}
-                            role="option"
-                            aria-selected={option.value === value}
-                            aria-disabled={option.disabled}
-                            onClick={() => !option.disabled && selectOption(option)}
-                            onMouseEnter={() => !option.disabled && setActiveIndex(index)}
-                        >
-                            {option.label}
-                        </li>
-                    ))}
+                    <ChevronDown isOpen={isOpen || isFocused} />
+                </span>
 
-                </ul>
-            </div>
+
+            </button>
+            {(helperText || errorMessage) && !isOpen && (
+                <p id={helperId} className={helperStyles} role={errorMessage ? "alert" : undefined}>
+                    <span className="text-text-colour-warning ml-0.5">*</span>{errorMessage || helperText}
+                </p>
+            )}
+            <ul
+                ref={listboxRef}
+                id={listboxId}
+                className={listboxStyles}
+                role="listbox"
+                aria-labelledby={labelId}
+                aria-activedescendant={
+                    activeIndex >= 0 ? `${id}-option-${activeIndex}` : undefined
+                }
+                tabIndex={-1}
+                onKeyDown={handleListboxKeyDown}
+            >
+                {options.map((option, index) => (
+                    <li
+                        key={option.value}
+                        ref={(el) => { (optionRefs.current[index] = el) }}
+                        id={`${id}-option-${index}`}
+                        className={getOptionStyles(option, index)}
+                        role="option"
+                        aria-selected={option.value === value}
+                        aria-disabled={option.disabled}
+                        onClick={() => !option.disabled && selectOption(option)}
+                        onMouseEnter={() => !option.disabled && setActiveIndex(index)}
+                    >
+                        {option.label}
+                    </li>
+                ))}
+
+            </ul>
         </div>
+
     )
 }

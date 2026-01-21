@@ -24,7 +24,11 @@ export function App() {
             <p className="text-body-lg-desktop text-text-colour-brand">
               Primary color should be orange (#fc4c02)
             </p>
-            <Button variant='secondary' size='medium'>Test button</Button>
+            <div className='flex gap-2'>
+              <Button variant='primary' size='small'>Test button 2</Button>
+
+              <Button variant='secondary' size='medium'>Test button</Button>
+            </div>
           </div>
 
           <div className="p-6 bg-white rounded-lg space-y-4">

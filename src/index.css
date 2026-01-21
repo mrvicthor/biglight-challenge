@@ -1042,12 +1042,10 @@
 /* Body automatically adapts to theme changes */
 body {
   background-color: var(--surface-colour-page);
-  color: var(--text-colour-body);
   font-family: var(--font-font-family-paragraph);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Theme-aware component classes that work with your existing structure */
 .theme-transition {
   transition: all 0.3s ease;
 }
@@ -1057,13 +1055,5 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-font-family-headings);
 }
 
-/* Automatic border radius switching (Brand B = 0, Brand A = rounded) */
-[data-theme="brandB"] .rounded,
-[data-theme="brandB"] .rounded-sm,
-[data-theme="brandB"] .rounded-md,
-[data-theme="brandB"] .rounded-lg,
-[data-theme="brandB"] .rounded-xl {
-  border-radius: 0 !important;
-}
 
 }

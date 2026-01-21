@@ -11,14 +11,11 @@ export interface ContactCardProps {
 
 const ContactCard = ({ size = 'mobile', alt = 'Contact card' }: ContactCardProps) => {
     const image = size === 'desktop' ? desktopImage : mobileImage
-    const sizeStyles = {
-        mobile: "w-[18.4375rem] h-[8.625rem]",
-        desktop: "w-[24.625rem] h-[12.125rem]",
-    };
+
 
     return (
         <img
-            className={`${sizeStyles[size]} object-cover rounded-lg`}
+            className='w-full object-cover rounded-lg'
             alt={alt}
             src={image}
         />

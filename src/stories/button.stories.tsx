@@ -101,7 +101,7 @@ export const AllVariants: Story = {
         <div className="space-y-8 p-8">
             <div>
                 <h3 className="text-lg font-semibold mb-4 text-text-heading">Default States</h3>
-                <div className="flex gap-4 flex-wrap">
+                <div className="flex gap-4">
                     <Button size='medium' variant="primary">Primary</Button>
                     <Button size='medium' variant="secondary">Secondary</Button>
                     <Button size='medium' variant="tertiary">Tertiary</Button>
@@ -113,7 +113,7 @@ export const AllVariants: Story = {
 
             <div>
                 <h3 className="text-lg font-semibold mb-4 text-text-heading">Disabled States</h3>
-                <div className="flex gap-4 flex-wrap">
+                <div className="flex gap-4 ">
                     <Button size='medium' variant="primary" disabled>Primary</Button>
                     <Button size='medium' variant="secondary" disabled>Secondary</Button>
                     <Button size='medium' variant="tertiary" disabled>Tertiary</Button>
@@ -126,7 +126,7 @@ export const AllVariants: Story = {
     ),
 };
 
-// Interactive Example
+
 export const Interactive: Story = {
     render: () => {
         const handleClick = () => {
@@ -152,7 +152,7 @@ export const Interactive: Story = {
     },
 };
 
-// Theme Comparison
+
 export const ThemeComparison: Story = {
     render: () => (
         <div className="space-y-8 p-8">
@@ -177,7 +177,7 @@ export const ThemeComparison: Story = {
     ),
 };
 
-// Accessibility Test
+
 export const AccessibilityTest: Story = {
     render: () => (
         <div className="space-y-6 p-8">
@@ -188,12 +188,12 @@ export const AccessibilityTest: Story = {
                 <p className="text-sm text-text-body mb-4">
                     Try tabbing through these buttons with your keyboard:
                 </p>
-                <div className="flex gap-4 flex-wrap">
+                <div className="flex gap-4">
                     <Button size='medium' variant="primary">First</Button>
                     <Button size='medium' variant="secondary">Second</Button>
                     <Button size='medium' variant="tertiary">Third</Button>
-                    <Button size='medium' variant="primary" disabled>Disabled (Skipped)</Button>
-                    <Button size='medium' variant="primary">Fourth</Button>
+                    <Button size='small' variant="primary" disabled>Disabled (Skipped)</Button>
+                    <Button size='small' variant="primary">Fourth</Button>
                 </div>
             </div>
         </div>

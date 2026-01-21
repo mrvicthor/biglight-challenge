@@ -213,10 +213,8 @@ function generateThemeAwareCSS() {
     tokenCount = 0;
     const globalTokens = extractGlobalTokens();
 
-    console.log('');
     const brandATokens = extractBrandTokens('BrandA');
 
-    console.log('');
     const brandBTokens = extractBrandTokens('BrandB');
 
     const allBrandATokens = { ...globalTokens, ...brandATokens };
@@ -225,10 +223,6 @@ function generateThemeAwareCSS() {
     const brandAGroups = groupTokens(allBrandATokens);
     const brandBGroups = groupTokens(allBrandBTokens);
 
-    console.log(`\n✅ EXTRACTION COMPLETE!`);
-    console.log(`   Total unique tokens: ${tokenCount}`);
-    console.log(`   Brand A tokens: ${Object.keys(allBrandATokens).length}`);
-    console.log(`   Brand B tokens: ${Object.keys(allBrandBTokens).length}`);
 
     let css = '/* Auto-generated design tokens - DO NOT EDIT MANUALLY */\n';
     css += `/* Total unique tokens extracted: ${tokenCount} */\n`;
@@ -280,7 +274,6 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Theme-aware component classes that work with your existing structure */
 .theme-transition {
   transition: all 0.3s ease;
 }
@@ -288,15 +281,6 @@ body {
 /* Brand-specific font families automatically switch */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-font-family-headings);
-}
-
-/* Automatic border radius switching (Brand B = 0, Brand A = rounded) */
-[data-theme="brandB"] .rounded,
-[data-theme="brandB"] .rounded-sm,
-[data-theme="brandB"] .rounded-md,
-[data-theme="brandB"] .rounded-lg,
-[data-theme="brandB"] .rounded-xl {
-  border-radius: 0 !important;
 }
 `;
 
@@ -339,7 +323,6 @@ function generateTailwindConfig() {
         "plugins": []
     };
 
-    // Populate colors with the exact same structure (FIXED)
     Object.entries(allBrandATokens).forEach(([key, data]) => {
         if (data.type === 'color' || key.includes('colour') || key.includes('color')) {
             const parts = key.split('-');
@@ -347,7 +330,6 @@ function generateTailwindConfig() {
             if (key.startsWith('alias-')) {
                 addNestedProperty(config.theme.extend.colors.alias, parts.slice(1), `var(--${key})`);
             } else if (key.startsWith('border-colour-')) {
-                // FIXED: Add directly to colors, not as border utilities
                 addNestedProperty(config.theme.extend.colors["border-colour"], parts.slice(2), `var(--${key})`);
             } else if (key.startsWith('icon-colour-')) {
                 addNestedProperty(config.theme.extend.colors["icon-colour"], parts.slice(2), `var(--${key})`);
@@ -359,30 +341,24 @@ function generateTailwindConfig() {
                 addNestedProperty(config.theme.extend.colors["primitives-colour"], parts.slice(2), `var(--${key})`);
             }
         } else if (key.includes('desktop-font-size') || key.includes('mobile-font-size')) {
-            // FIXED: Better font size handling
             const cleanKey = key.replace(/^(desktop|mobile)-font-size-/, '');
             const breakpoint = key.includes('desktop') ? 'desktop' : 'mobile';
             config.theme.extend.fontSize[`${cleanKey}-${breakpoint}`] = `var(--${key})`;
         } else if (key.includes('desktop-line-height') || key.includes('mobile-line-height')) {
-            // FIXED: Better line height handling
             const cleanKey = key.replace(/^(desktop|mobile)-line-height-/, '');
             const breakpoint = key.includes('desktop') ? 'desktop' : 'mobile';
             config.theme.extend.lineHeight[`${cleanKey}-${breakpoint}`] = `var(--${key})`;
         } else if (key.includes('desktop-spacing') || key.includes('mobile-spacing')) {
-            // FIXED: Better spacing handling
             const cleanKey = key.replace(/^(desktop|mobile)-spacing-/, '');
             const breakpoint = key.includes('desktop') ? 'desktop' : 'mobile';
             config.theme.extend.spacing[`${cleanKey}-${breakpoint}`] = `var(--${key})`;
         } else if (key.includes('primitives-scale')) {
-            // FIXED: Scale handling
             const cleanKey = key.replace(/^primitives-scale-/, '');
             config.theme.extend.spacing[`scale-${cleanKey}`] = `var(--${key})`;
         } else if (key.includes('border-width')) {
-            // FIXED: Border width handling
             const cleanKey = key.replace(/.*border-width-/, '');
             config.theme.extend.borderWidth[cleanKey] = `var(--${key})`;
         } else if (key.includes('border-radius')) {
-            // FIXED: Border radius handling  
             const cleanKey = key.replace(/.*border-radius-/, '');
             config.theme.extend.borderRadius[cleanKey] = `var(--${key})`;
         } else if (key.includes('primitives-font-brand')) {
@@ -398,7 +374,6 @@ function generateTailwindConfig() {
                 config.theme.extend.fontWeight[`${brand}-${weight}`] = `var(--${key})`;
             }
         } else if (key.includes('font-font-family')) {
-            // FIXED: Mapped font family handling
             const cleanKey = key.replace(/^font-font-family-/, '');
             config.theme.extend.fontFamily[cleanKey] = `var(--${key})`;
         } else if (key.includes('font-font-weight')) {

@@ -39,19 +39,18 @@ export function Input(props: InputProps) {
     const [isFocused, setIsFocused] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
 
-    // Sync initial state from prop (for Storybook)
+
     useEffect(() => {
         if (initialState === 'Focus') setIsFocused(true);
         if (initialState === 'Filled') setIsDirty(true);
     }, [initialState]);
 
-    // TRACK STATES dynamically
-    const handleFocus = useCallback((e: FocusEvent) => {
+
+    const handleFocus = useCallback((_e: FocusEvent) => {
         setIsFocused(true);
-        // Preact: no default onFocus, but props.onFocus if needed
     }, []);
 
-    const handleBlur = useCallback((e: FocusEvent) => {
+    const handleBlur = useCallback((_e: FocusEvent) => {
         setIsFocused(false);
     }, []);
 
@@ -59,15 +58,15 @@ export function Input(props: InputProps) {
         const target = e.currentTarget as HTMLInputElement;
         const newValue = target.value;
         if (!isDirty && newValue.trim() !== '') {
-            setIsDirty(true);  // Track 'Filled'
+            setIsDirty(true);
         }
         onChange?.(newValue);
-    }, [onChange, isDirty]);  // Dep on isDirty to avoid stale closure
+    }, [onChange, isDirty]);
 
     const handleClear = useCallback((e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        setIsDirty(false);  // Reset dirty on clear
+        setIsDirty(false);
         onChange?.('');
     }, [onChange]);
 
@@ -77,7 +76,7 @@ export function Input(props: InputProps) {
         if (error) return 'Error';
         if (success) return 'Success';
         if (isFocused) return 'Focus';
-        if (isDirty || value.trim() !== '') return 'Filled';  // !!value as fallback
+        if (isDirty || value.trim() !== '') return 'Filled';
         return 'Default';
     };
 
@@ -98,7 +97,7 @@ export function Input(props: InputProps) {
         }
     );
 
-    // Input classes (your logic preserved + visualState consistency)
+
     let inputClasses = clsx(
         'peer block w-full h-full pl-3 pr-6 py-2.5 text-sm rounded-md transition-colors duration-200 ease-in-out outline-none',
         className,
@@ -116,11 +115,8 @@ export function Input(props: InputProps) {
         }
     );
 
-    // Show clear icon ONLY if value exists, !disabled, !success
-    const showClear = !!value.trim() && !disabled && !success && !error;  // Hide on error too?
-
     return (
-        <div className="space-y-1">  {/* Added spacing for helpers */}
+        <div className="space-y-1">
             <div className="relative h-[3.25rem] w-[17rem]">
                 {label && <label className={labelClasses} for={helperId || name || 'input-default'}>{label}</label>}
                 <input
@@ -150,7 +146,6 @@ export function Input(props: InputProps) {
                     </button>
                 )}
             </div>
-            {/* Helper text */}
             {required && (
                 <p className="text-body-xs-mobile lg:text-body-xs-desktop text-text-colour-disabled leading-label-extra-small-mobile lg:label-extra-small-desktop">
                     <span className="ml-0.5 text-text-colour-warning">*</span> required
