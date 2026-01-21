@@ -1,0 +1,40 @@
+# Approach & Implementation Notes
+
+## 1) Design-to-code workflow
+- Started from provided Figma token export (JSON) and created a script to convert tokens into CSS variables and Tailwind config.
+- `scripts/generate.token.cjs` emits `src/index.css` with base layer + theme-aware custom properties, and regenerates `tailwind.config.js` to align Tailwind tokens with the CSS vars.
+- Built components (button, input, dropdown, card, login) in Preact, wiring them to tokenized utility classes so visual changes flow through design tokens.
+- Verified in Storybook with controls and global theme switcher to ensure component states and interactive flows match the design (desktop + mobile layouts).
+
+## 2) Token management
+- Source of truth: Figma/JSON tokens (`figma-tokens.json`).
+- Generation step: `npm run tokens` → runs `tokens` script to produce:
+  - `src/index.css`: Tailwind base layer plus 600+ CSS custom properties for both brands.
+  - `tailwind.config.js`: Extends Tailwind theme values to point to those CSS vars.
+- Consumption:
+  - Utility classes reference the CSS variables (e.g., `bg-surface-colour-action-primary`, `text-text-colour-body`).
+  - Components rely on utilities usage, so visuals stay token-driven.
+
+## 3) Theme switching (multiple brands)
+- Two themes: `brandA` (default) and `brandB`.
+- Switching mechanism: set `data-theme="brandB"` on a wrapping element (e.g., `body`, Storybook decorator root, or a specific container). No prop drilling required.
+- `src/index.css` defines both brands’ CSS vars and scopes brand-specific overrides via `[data-theme="brandB"]`.
+- Storybook toolbar exposes a Theme toggle (paintbrush icon) wired in `.storybook/preview.ts`; it wraps every story with `data-theme` on the root container.
+
+## 4) When tokens change
+- Update tokens in Figma/JSON → export/replace `figma-tokens.json`.
+- Run `npm run tokens` to regenerate `src/index.css` and `tailwind.config.js`.
+- Restart Storybook or Vite dev server if already running.
+- Components automatically pick up new values because they read from CSS vars/Tailwind utilities; no component-level edits needed for pure token changes.
+
+## 5) What I’d do differently with more time/production hardening
+- Introduce token pipeline validation (style-dictionary or tokens-studio) with schemas/tests to fail CI on malformed tokens.
+- Build a small form/layout primitives layer (stack/grid components) to ensure consistent responsive spacing without ad-hoc widths.
+- Provide a design-system docs site (Storybook docs MDX or Docusaurus) explaining usage, dos/don’ts, and interaction patterns.
+
+## 6) Trade-offs and limitations
+- Responsiveness: some components currently use fixed widths/heights; would refactor to fluid/responsive sizing for smaller viewports.
+- Token regen is manual (`npm run tokens`); a CI hook or Git pre-commit could automate and verify diffs.
+- Limited test coverage: relies mostly on Storybook for validation; needs unit/interaction tests and accessibility checks.
+- No runtime theming API beyond `data-theme`; brand switching is global-per-container, not per-component override.
+- Not fully production-hardened for perf (tree-shaking, bundle size budgets) or for multi-brand theming at scale (e.g., dynamic brand loading at runtime).

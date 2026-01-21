@@ -86,7 +86,7 @@ An accessible dropdown component with full keyboard navigation support.
 export default meta;
 type Story = StoryObj<typeof Dropdown>;
 
-// Default State
+
 export const Default: Story = {
     args: {
         id: "dropdown-default",
