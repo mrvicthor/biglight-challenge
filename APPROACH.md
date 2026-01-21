@@ -33,11 +33,15 @@
 - Provide a design-system docs site (Storybook docs MDX or Docusaurus) explaining usage, dos/don’ts, and interaction patterns.
 
 ## 6) Trade-offs and limitations
-- Responsiveness: some components currently use fixed widths/heights; would refactor to fluid/responsive sizing for smaller viewports.
-- Token regen is manual (`npm run tokens`); a CI hook or Git pre-commit could automate and verify diffs.
-- Limited test coverage: relies mostly on Storybook for validation; needs unit/interaction tests and accessibility checks.
-- No runtime theming API beyond `data-theme`; brand switching is global-per-container, not per-component override.
-- Not fully production-hardened for performance (tree-shaking, bundle size budgets) or for multi-brand theming at scale (e.g., dynamic brand loading at runtime).
+- Responsiveness: Some components currently use fixed widths/heights to match the spec; I’d refactor toward fluid sizing (e.g., h-auto, aspect-*, responsive constraints) to improve behavior on smaller viewports.
+
+- Token generation: Token regeneration is manual (npm run tokens). A CI job (and/or pre-commit) should validate the token schema and fail builds if generated outputs are out of date or diffs aren’t committed.
+
+- Testing: Validation is primarily via Storybook. Next steps would be unit + interaction tests (Storybook test runner / RTL), plus automated accessibility checks (axe/a11y addon) and optional visual regression.
+
+- Theming: Theming is driven by data-theme at the container level. This supports global brand switching, but there’s no per-component override API today; that could be added if needed via scoped theme wrappers/providers.
+
+- Production hardening: Not yet optimized/verified for performance and scaling concerns (bundle size budgets, tree-shaking, CSS size, and strategies for multi-brand token delivery/dynamic loading).
 
 ## AI usage note
 I used ChatGPT and Claude as a support tool during development. It was mainly used to clarify concepts, sanity-check implementation approaches, and help refine explanations and documentation.
